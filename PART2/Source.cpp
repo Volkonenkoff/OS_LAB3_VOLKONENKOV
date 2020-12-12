@@ -23,17 +23,20 @@ int main()
             int cntThreads;
             cout << "Введите кол-во потоков: ";
             cin >> cntThreads;
+            omp_set_num_threads(cntThreads);
             cout << "Количество потоков " << cntThreads << std::endl;
         }
     }
-
+    
     
     DWORD t1 = timeGetTime();
-#pragma omp parallel for schedule(dynamic,ch) num_threads(cntThreads) reduction (+:sum)
-    for (unsigned long i = 0; i < N; i++)
+#pragma omp parallel for schedule(dynamic,ch) private(x) reduction (+:sum)
     {
-        x = (i + .5) * step;
-        sum = sum + 4.0 / (1. + x * x);
+        for (unsigned long i = 0; i < N; i++)
+        {
+            x = (i + .5) * step;
+            sum = sum + 4.0 / (1. + x * x);
+        }
     }
     sum = sum * step;
     DWORD t2 = timeGetTime();
